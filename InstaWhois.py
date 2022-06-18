@@ -78,13 +78,13 @@ def Error(com) :
     exit()
 
 def Account_session():
-    with open('session.txt', 'r') as file:
+    with open('config/session.txt', 'r') as file:
         session.cookies.update(json.load(file))
-    with open('headers.txt', 'r') as file:
+    with open('config/headers.txt', 'r') as file:
         session.headers = json.load(file)
 
 def account_cookies():
-    with open('cookie.txt', 'r') as file:
+    with open('config/cookie.txt', 'r') as file:
         session.cookies.update({'sessionid':file.readline()})
 
 def Login_account():
@@ -122,11 +122,11 @@ def Login_account():
 
  
     if res_data['authenticated']:
-        with open('session.txt', 'w+') as file:
+        with open('config/session.txt', 'w+') as file:
             cookie = session.cookies.get_dict()
             del cookie["ds_user_id"]
             json.dump(cookie, file)
-        with open('headers.txt', 'w+') as file:
+        with open('config/headers.txt', 'w+') as file:
             json.dump(session.headers, file)
         print(f"{red}[ {ylw}We logged in to {grn}'{username}' {ylw}account with user ID {grn}'{res_data['userId']}' {red}]{reset}")
     else:
@@ -314,7 +314,7 @@ if __name__ == "__main__":
                 except:
                     Error("Enter the correct input")
 
-                with open("cookie.txt" , "w+") as file:
+                with open("config/cookie.txt" , "w+") as file:
                     file.write(cookie)
             else:
                 Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
@@ -329,10 +329,10 @@ if __name__ == "__main__":
         elif argv[1] == "--run" or argv[1] == "-r":
             if (len(argv) <= 3):
                 print(ban)
-                if(path.exists("session.txt") == True ) and (stat("session.txt").st_size > 0) and (path.exists("headers.txt") == True) and (stat("headers.txt").st_size > 0):
+                if(path.exists("config/session.txt") == True ) and (stat("config/session.txt").st_size > 0) and (path.exists("config/headers.txt") == True) and (stat("config/headers.txt").st_size > 0):
                     Account_session()
                     ext_info(argv[2])
-                elif (path.exists("cookie.txt") == True ) and (stat("cookie.txt").st_size > 0):
+                elif (path.exists("config/cookie.txt") == True ) and (stat("config/cookie.txt").st_size > 0):
                     account_cookies()
                     ext_info(argv[2])
                 else:
