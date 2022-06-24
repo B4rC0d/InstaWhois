@@ -3,6 +3,7 @@ from datetime import datetime
 from time import sleep
 from os import system , path  , stat
 from sys import argv
+from getpass import getpass
 from colorama import init , Fore 
 try:
     import platform
@@ -90,7 +91,7 @@ def account_cookies():
 def Login_account():
     try:
         username = input(f"{white}iNsTaWhOiS{red}( UseName ){reset} > {grn}")
-        password = input(f"{white}iNsTaWhOiS{red}( PassWord ){reset} > {grn}")                          
+        password = getpass(f"{white}iNsTaWhOiS{red}( PassWord ){reset} > {grn}")                          
     except:
         Error("Input Error")
     
