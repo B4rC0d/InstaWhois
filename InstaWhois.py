@@ -1,35 +1,18 @@
-import requests , json
-from datetime import datetime
 from time import sleep
-from os import system , path  , stat
 from sys import argv
-from getpass import getpass
-from colorama import init , Fore 
+import requests
+from os import system  as term , path  , stat
 try:
-    import platform
+    from platform import system
 except:
     system("pip install platform")
 
-try:
-    from pyfiglet import figlet_format
-except:
-    system("pip install pyfiglet")
-    
-try:
-    from termcolor2 import colored
-except:
-    system("pip install termcolor2")
-init()
+blu = "\033[96m"
+red = "\033[91m"
+grn = "\033[32m"
+ylw = "\033[93m"
+res = "\033[0;m"
 
-red = Fore.RED
-grn = Fore.GREEN
-ylw = Fore.YELLOW
-blu = Fore.BLUE
-reset = Fore.RESET
-white = Fore.WHITE
-video = 0
-image = 0
-session = requests.session()
 
 ban = f"""{ylw}
 .___                   __           __      __ .__             .__          
@@ -39,108 +22,46 @@ ban = f"""{ylw}
 |___||___|  //____  > |__|  (____  / \__/\  /  |___|  / \____/ |__|/____  > 
           \/      \/             \/       \/        \/                  \/ 
 
-                   Version 1.0 - Developed by B4rC0d{reset}
+                   Version 1.0 - Developed by B4rC0d{res}
 """
-help_ban = f"""
-   {red}+{ylw}-------------------------{blu}[ {red}Help tool {blu}]{ylw}----------------------------{red}+
-   {ylw}|                                                              {ylw}    |
-   {ylw}|   {grn}--help{ylw}/{grn}-h {red}::: {grn}python3 {red}InstaWhois.py {ylw}< {grn}--help {blu}or {grn}-h {ylw}>           |
-   {ylw}|     >  {red}To see the tool help                                  {ylw}    |
-   {ylw}|                                                              {ylw}    |
-   {ylw}|   {grn}--acoount{ylw}/{grn}-a {red}::: {grn}python3 {red}InstaWhois.py {ylw}< {grn}--account {blu}or {grn}-a {ylw}>     |
-   {ylw}|     >  {red}Login to your Instagram account                       {ylw}    |
-   {ylw}|                                                              {ylw}    |
-   {ylw}|   {grn}--cookie{ylw}/{grn}-c {red}::: {grn}python3 {red}InstaWhois.py {ylw}< {grn}--cookie {blu}or {grn}-c {ylw}>       |
-   {ylw}|     >  {red}Login with Instagram cookies                          {ylw}    |
-   {ylw}|                                                              {ylw}    |
-   {ylw}|   {grn}--run{ylw}/{grn}-r {red}::: {grn}python3 {red}InstaWhois.py {ylw}< {grn}--run {blu}or {grn}-r {ylw}> < {red}Target {ylw}>  |
-   {ylw}|     >  {red}Run the tool                                          {ylw}    |
-   {ylw}|                                                              {ylw}    |
-   {red}+{ylw}------------------------------------------------------------------{red}+
+
+help = f"""
+    {red}Usage {ylw}: {grn}python InstaWhois.py [OPTION] ...
+    {ylw}To get Instagram information
+
+    Mandatory arguments to long options are mandatory for short options too
+        {red}-h {ylw}, {red}--help          {grn}display this help and exit
+        {red}-s {ylw}, {red}--set           {grn}To set the session ID
+        {red}-r {ylw}, {red}--run           {grn}Run the tool
+
+    {ylw}Use help 
+
+        {red}[{blu}SetSession{red}] {grn}python {red}InstaWhois.py {ylw}--set{red}/{ylw}-s {red}[{grn}Instagram SessionID{red}]
+        {red}[{blu}Run{red}] {grn}python {red}InstaWhois.py {ylw}--run{red}/{ylw}-r {red}[{grn}Target UserName{red}]
 """
+
 
 def clear():
     sleep(0.2)
-    if platform.system() == "Windows":
-        system('cls')
-    elif platform.system() == "Linux" or platform.system() == "Darwin":
-        system('clear')
+    if system() == "Windows":
+        term('cls')
+    elif system() == "Linux" or system() == "Darwin":
+        term('clear')
 
-def Error(com) :
-    clear()
-    print(f""" {red}_____     
-| ____|_ __ _ __ ___  _ __ 
-|  _| | '__| '__/ _ \| '__|
-| |___| |  | | | (_) | |   
-|_____|_|  |_|  \___/|_|
 
-{ylw}[{red}!{ylw}] {red+com}""")
-    sleep(0.5)
-    exit()
+def ext_info(target , sessionsId):
+    cookies = {'sessionid': sessionsId}
+    headers = {'User-Agent': 'Instagram 64.0.0.14.96'}
 
-def Account_session():
-    with open('config/session.txt', 'r') as file:
-        session.cookies.update(json.load(file))
-    with open('config/headers.txt', 'r') as file:
-        session.headers = json.load(file)
-
-def account_cookies():
-    with open('config/cookie.txt', 'r') as file:
-        session.cookies.update({'sessionid':file.readline()})
-
-def Login_account():
-    try:
-        username = input(f"{white}iNsTaWhOiS{red}( UseName ){reset} > {grn}")
-        password = getpass(f"{white}iNsTaWhOiS{red}( PassWord ){reset} > {grn}")                          
-    except:
-        Error("Input Error")
-    
-
-    session.headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
-        "Referer": "https://www.instagram.com/"
-        
-        }
-
-    Base_Requests = session.get("https://www.instagram.com/")
-
-    session.headers.update(
-        {'X-CSRFToken':Base_Requests.cookies['csrftoken']
-    }
-    )
-    Login_Requests = session.post(f"https://www.instagram.com/accounts/login/ajax/", 
-        data={
-            'enc_password': "#PWD_INSTAGRAM_BROWSER:0:{}:{}".format(int(datetime.now().timestamp()),password) 
-            ,'username':username,
-        } 
-        ,allow_redirects=True)
-
-    session.headers.update({
-            'X-CSRFToken':Login_Requests.cookies['csrftoken']
-        })
-
-    res_data = Login_Requests.json()
-
- 
-    if res_data['authenticated']:
-        with open('config/session.txt', 'w+') as file:
-            cookie = session.cookies.get_dict()
-            del cookie["ds_user_id"]
-            json.dump(cookie, file)
-        with open('config/headers.txt', 'w+') as file:
-            json.dump(session.headers, file)
-        print(f"{red}[ {ylw}We logged in to {grn}'{username}' {ylw}account with user ID {grn}'{res_data['userId']}' {red}]{reset}")
-    else:
-        print(f"{red}Login Failed\n")
-        Login_account()
-
-def ext_info(target):
-    data_target = session.get(f"https://www.instagram.com/{target}/?__a=1").json()
-    # print(data_target)
+    data_target = requests.get(
+        f'https://www.instagram.com/{target}/?__a=1',
+        headers=headers,
+        cookies=cookies
+    ).json()
     target_data = data_target['graphql']['user']
     mediatype = target_data['edge_owner_to_timeline_media']['edges']
     print(f''' {ylw}[{red}!{ylw}] {grn}Target {red}"{target}" {grn}data was extracted with user {red}"{target_data['id']}"
- {ylw}[{red}!{ylw}] {grn}Use the command {red}"list" {grn}to see the options{reset}\n''')
+ {ylw}[{red}!{ylw}] {grn}Use the command {red}"list" {grn}to see the options{res}\n''')
     while(True):
         try:
             command = input(f"{ylw}Command :{grn} ")
@@ -157,16 +78,16 @@ def ext_info(target):
 {ylw}- {red}photodes        {grn}Get description of target's photos
 {ylw}- {red}propic          {grn}Download user's profile picture
 {ylw}- {red}bio             {grn}Get a target biography 
-{ylw}- {red}tagged          {grn}Get list of users tagged by target{reset}
+{ylw}- {red}tagged          {grn}Get list of users tagged by target{res}
 """)
         elif command == "exit":
             exit()
         elif command == "captions":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n") 
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
                     for i in mediatype:
                         node = i['node']
@@ -178,10 +99,10 @@ def ext_info(target):
             
         elif command == "comments":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n") 
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
                     for i in mediatype:
                         node = i['node']
@@ -221,10 +142,10 @@ def ext_info(target):
 """)
         elif command == "likes":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n") 
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
                     for i in mediatype:
                         node = i['node']
@@ -234,10 +155,10 @@ def ext_info(target):
 """)
         elif command == "mediatype":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n") 
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
                     for i in mediatype:
                         node = i['node']['__typename']
@@ -254,10 +175,10 @@ def ext_info(target):
 
         elif command == "photodes":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n")   
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n")   
                 else:
                     for i in mediatype:
                         node = i['node']
@@ -280,10 +201,10 @@ def ext_info(target):
 """)
         elif command == "tagged":
             if target_data['is_private'] == True:
-                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{reset} \n")
+                print(f"\n     {grn}[{red}-{grn}] {red}Is Private{res} \n")
             else:
                 if len(mediatype) == 0:
-                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{reset} \n") 
+                    print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
                     for i in mediatype:
                         node = i['node']
@@ -300,53 +221,55 @@ def ext_info(target):
 
 
 
-if __name__ == "__main__":
+
+
+
     
-    if(len(argv) <= 1 ):
-        Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
-        
-    elif(len(argv) >= 1):
-
-        if argv[1] == "--cookie" or argv[1] == "-c":
-            if (len(argv) <= 2):
-                print(ban)
-                try:
-                    cookie = input(f"{white}iNsTaWhOiS{red}( Cookie ){reset} > {grn}")
-                except:
-                    Error("Enter the correct input")
-
-                with open("config/cookie.txt" , "w+") as file:
-                    file.write(cookie)
-            else:
-                Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
-
-        elif argv[1] == "--account" or argv[1] == "-a":
-            if (len(argv) <= 2):
-                print(ban)
-                Login_account()
-            else:
-                Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
-
-        elif argv[1] == "--run" or argv[1] == "-r":
-            if (len(argv) <= 3):
-                print(ban)
-                if(path.exists("config/session.txt") == True ) and (stat("config/session.txt").st_size > 0) and (path.exists("config/headers.txt") == True) and (stat("config/headers.txt").st_size > 0):
-                    Account_session()
-                    ext_info(argv[2])
-                elif (path.exists("config/cookie.txt") == True ) and (stat("config/cookie.txt").st_size > 0):
-                    account_cookies()
-                    ext_info(argv[2])
-                else:
-                    Error("Please add an Instagram account\n    Use --help for more information")
-            else:
-                Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
-
-        elif argv[1] == "--help" or argv[1] == "-h":
-            if (len(argv) <= 2):
-                print(ban)
-                print(help_ban)
-            else:
-                Error("Please use the correct arguments\n   Get help from the help of the argument --help/-h")
+if(len(argv) <= 1 ):
+    clear()
+    print(ban)
+    print(help)        
+elif(len(argv) >= 1):
+    if argv[1] == "--set" or argv[1] == "-s":
+        if (len(argv) == 3) and (len(argv) > 2):
+            clear()
+            print(ban)
+            with open("config/cookie.txt" , "w+") as file:
+                file.write(argv[2])
+            print(f"         {red}[ {grn}Cookie {ylw}Is Set {red}]{res}")
         else:
-            Error("This is not an argument, get help from a guide")
+            clear()
+            print(ban)
+            print(help)
+            
+    elif argv[1] == "--run" or argv[1] == "-r":
+        if (len(argv) == 3) and (len(argv) > 2):
+            if (path.exists("config/cookie.txt") == True ) and (stat("config/cookie.txt").st_size > 0):
+                clear()
+                print(ban)
+                with open("config/cookie.txt" , 'r') as file:
+                    sid = file.readline()
+                ext_info(target=argv[2] , sessionsId=sid)
+            else:
+                clear()
+                print(ban)
+                print(help)
+        else:
+            clear()
+            print(ban)
+            print(help)
+
+    elif argv[1] == "--help" or argv[1] == "-h":
+        if (len(argv) <= 2):
+            clear()
+            print(ban)
+            print(help)
+        else:
+            clear()
+            print(ban)
+            print(help)
+    else:
+        clear()
+        print(ban)
+        print(help)
             
