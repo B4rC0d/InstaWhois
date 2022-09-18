@@ -54,11 +54,12 @@ def ext_info(target , sessionsId):
     headers = {'User-Agent': 'Instagram 64.0.0.14.96'}
 
     data_target = requests.get(
-        f'https://www.instagram.com/{target}/?__a=1',
+        f'https://i.instagram.com/api/v1/users/web_profile_info/?username={target}',
         headers=headers,
         cookies=cookies
     ).json()
-    target_data = data_target['graphql']['user']
+
+    target_data = data_target['data']['user']
     mediatype = target_data['edge_owner_to_timeline_media']['edges']
     print(f''' {ylw}[{red}!{ylw}] {grn}Target {red}"{target}" {grn}data was extracted with user {red}"{target_data['id']}"
  {ylw}[{red}!{ylw}] {grn}Use the command {red}"list" {grn}to see the options{res}\n''')
@@ -78,8 +79,13 @@ def ext_info(target , sessionsId):
 {ylw}- {red}photodes        {grn}Get description of target's photos
 {ylw}- {red}propic          {grn}Download user's profile picture
 {ylw}- {red}bio             {grn}Get a target biography 
-{ylw}- {red}tagged          {grn}Get list of users tagged by target{res}
+{ylw}- {red}tagged          {grn}Get list of users tagged by target
+{ylw}- {red}clear           {grn}Cleaning the terminal
+{ylw}- {red}exit            {grn}Exit the tool{res}
+
 """)
+        elif command == "clear":
+            clear()
         elif command == "exit":
             exit()
         elif command == "captions":
@@ -160,6 +166,8 @@ def ext_info(target , sessionsId):
                 if len(mediatype) == 0:
                     print(f"\n     {grn}[{ylw}!{grn}] {red}No Post{res} \n") 
                 else:
+                    video = 0
+                    image = 0
                     for i in mediatype:
                         node = i['node']['__typename']
                         if node == "GraphVideo":
